@@ -7,19 +7,32 @@ import 'package:project_flutter/response/table_resto_create_response.dart';
 
 
 class TableRestoRepository extends ApiClient {
-  Future<List<TableRestoModel>> getTableRestos() async {
+  
+  // ... (method getTableRestos dan addTableResto yang sudah ada)
+
+  // METHOD BARU UNTUK UPDATE
+  Future<TableRestoCreateResponse> updateTableResto(
+    int id, // Kita butuh ID untuk tahu data mana yang di-update
+    TableRestoParam tableRestoParam,
+  ) async {
     try {
-      var response = await dio.get('table-resto-list');
-      debugPrint('Table Resto GET ALL : ${response.data}');
-      List list = response.data;
-      List<TableRestoModel> listTableResto =
-      list.map((element) => TableRestoModel.fromJson(element)).toList();
-      return listTableResto;
+      // API endpoint untuk update biasanya menggunakan ID, contoh: 'table-resto-list/1'
+      var response = await dio.put(
+        'table-resto-list/$id', // Menggunakan method PUT dan menyertakan ID
+        data: tableRestoParam.toJson(),
+      );
+      debugPrint('TableResto PUT (Update) : ${response.data}');
+      // Kita bisa menggunakan response model yang sama dengan create
+      return TableRestoCreateResponse.fromJson(response.data);
     } on DioException catch (e) {
+      // Jika ingin pesan error yang lebih spesifik dari API
+      // String errorMessage = e.response?.data['message'] ?? 'Terjadi kesalahan';
+      // throw Exception(errorMessage);
       throw Exception(e);
-      //debugPrint(e.toString());
     }
   }
+}
+
 
   Future<TableRestoCreateResponse> addTableResto(
       TableRestoParam tableRestoParam,
@@ -37,4 +50,4 @@ class TableRestoRepository extends ApiClient {
       throw Exception(e);
     }
   }
-}
+
